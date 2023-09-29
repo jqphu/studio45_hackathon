@@ -63,4 +63,11 @@ ros2 launch xarm_planner test_xarm_planner_api_joint.launch.py dof:=6 robot_type
 
 If you see the arm move, or the simulation move. You have set this up correctly!
 
+## Developing
 
+There's a basic hello world package that you can investigate. Be sure to source
+all the required dependencies.
+
+1. cd dev_ws
+2. colcon build
+3. ros2 run hello hello_node
