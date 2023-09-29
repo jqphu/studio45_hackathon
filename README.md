@@ -58,16 +58,19 @@ This above command runs the ros2/moveit nodes for us to interact with the arm. K
 
 4. Run a test (note if you ran realmove, the arm will move. Be careful!)
 ```
-ros2 launch xarm_planner test_xarm_planner_api_joint.launch.py dof:=6 robot_type:=lite
+ros2 launch planner planner.launch.py dof:=6 robot_type:=lite
 ```
 
 If you see the arm move, or the simulation move. You have set this up correctly!
 
 ## Developing
 
-There's a basic hello world package that you can investigate. Be sure to source
+There's a basic planner package that you can investigate. Be sure to source
 all the required dependencies.
 
 1. cd dev_ws
-2. colcon build
-3. ros2 run hello hello_node
+2. colcon build --packages-up-to planner  
+
+Build the planner package and all of its dependencies
+
+3. ros2 launch planner planner.launch.py dof:=6 robot_type:=lite
