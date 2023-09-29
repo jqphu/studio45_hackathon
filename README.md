@@ -15,6 +15,13 @@ Everything will be based off Ubuntu 22.04.
 3. Check you can run `ros2` in a new terminal
 4. Install [MoveIt2](https://moveit.picknik.ai/main/doc/tutorials/getting_started/getting_started.html)
 
+### General Dependencies
+
+We use moveit visulization tools.
+```
+sudo apt install ros-iron-moveit-visual-tools
+```
+
 ### XARM Dependencies
 We've cloned xarm libraries as a submodule: https://github.com/xArm-Developer/xarm_ros2/tree/rolling
 

@@ -5,6 +5,10 @@
  * Author: Vinman <vinman.cub@gmail.com>
  ============================================================================*/
 
+#include <moveit_visual_tools/moveit_visual_tools.h>
+#include <rclcpp/rclcpp.hpp>
+#include <thread>
+
 #include "xarm_planner/xarm_planner.h"
 
 void exit_sig_handler(int signum) {
@@ -22,6 +26,8 @@ int main(int argc, char **argv) {
       rclcpp::Node::make_shared("test_xarm_planner_api_pose", node_options);
   RCLCPP_INFO(node->get_logger(), "test_xarm_planner_api_pose start");
 
+  const auto logger = node->get_logger();
+
   signal(SIGINT, exit_sig_handler);
 
   int dof;
@@ -37,6 +43,25 @@ int main(int argc, char **argv) {
 
   xarm_planner::XArmPlanner planner(node, group_name);
 
+  // We spin up a SingleThreadedExecutor so MoveItVisualTools interact with ROS
+  rclcpp::executors::SingleThreadedExecutor executor;
+  executor.add_node(node);
+  auto spinner = std::thread([&executor]() { executor.spin(); });
+
+  // Construct and initialize MoveItVisualTools
+  auto moveit_visual_tools = moveit_visual_tools::MoveItVisualTools{
+      node, "base_link", rviz_visual_tools::RVIZ_MARKER_TOPIC,
+      planner.move_group->getRobotModel()};
+  moveit_visual_tools.deleteAllMarkers();
+  moveit_visual_tools.loadRemoteControl();
+
+  // Create closures for visualization
+  auto const prompt = [&moveit_visual_tools](auto text) {
+    moveit_visual_tools.prompt(text);
+  };
+
+  std::vector<geometry_msgs::msg::Pose> poses;
+
   geometry_msgs::msg::Pose target_pose1;
   target_pose1.position.x = 0.3;
   target_pose1.position.y = -0.1;
@@ -45,6 +70,7 @@ int main(int argc, char **argv) {
   target_pose1.orientation.y = 0;
   target_pose1.orientation.z = 0;
   target_pose1.orientation.w = 0;
+  poses.push_back(target_pose1);
 
   geometry_msgs::msg::Pose target_pose2;
   target_pose2.position.x = 0.3;
@@ -54,6 +80,7 @@ int main(int argc, char **argv) {
   target_pose2.orientation.y = 0;
   target_pose2.orientation.z = 0;
   target_pose2.orientation.w = 0;
+  poses.push_back(target_pose2);
 
   geometry_msgs::msg::Pose target_pose3;
   target_pose3.position.x = 0.3;
@@ -63,6 +90,7 @@ int main(int argc, char **argv) {
   target_pose3.orientation.y = 0;
   target_pose3.orientation.z = 0;
   target_pose3.orientation.w = 0;
+  poses.push_back(target_pose3);
 
   geometry_msgs::msg::Pose target_pose4;
   target_pose4.position.x = 0.3;
@@ -72,21 +100,32 @@ int main(int argc, char **argv) {
   target_pose4.orientation.y = 0;
   target_pose4.orientation.z = 0;
   target_pose4.orientation.w = 0;
+  poses.push_back(target_pose4);
 
   while (rclcpp::ok()) {
-    planner.planPoseTarget(target_pose1);
-    planner.executePath();
 
-    planner.planPoseTarget(target_pose2);
-    planner.executePath();
+    for (const auto &pose : poses) {
 
-    planner.planPoseTarget(target_pose3);
-    planner.executePath();
+      // Create a plan to that target pose
+      prompt("Press 'Next' in the RvizVisualToolsGui window to plan");
+      moveit_visual_tools.trigger();
+      auto const success = planner.planPoseTarget(pose);
 
-    planner.planPoseTarget(target_pose4);
-    planner.executePath();
+      // Execute the plan
+      if (success) {
+        moveit_visual_tools.trigger();
+        prompt("Press 'Next' in the RvizVisualToolsGui window to execute");
+        moveit_visual_tools.trigger();
+        planner.executePath();
+      } else {
+        RCLCPP_ERROR(logger, "Planning failed!");
+      }
+    }
   }
 
   RCLCPP_INFO(node->get_logger(), "test_xarm_planner_api_pose over");
+  rclcpp::shutdown(); // <--- This will cause the spin function in the thread to
+                      // return
+  spinner.join();     // <--- Join the thread before exiting
   return 0;
 }

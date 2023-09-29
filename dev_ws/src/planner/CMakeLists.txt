@@ -31,6 +31,8 @@ find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(moveit_msgs REQUIRED)
 find_package(xarm_msgs REQUIRED)
+find_package(moveit_visual_tools REQUIRED)
+
 
 set(dependencies "rclcpp" "std_msgs" "geometry_msgs" "moveit_msgs" "xarm_msgs" "moveit")
 
@@ -42,6 +44,7 @@ include_directories(
 add_executable(planner src/xarm_planner.cpp src/planner.cpp)
 ament_target_dependencies(planner
   moveit_ros_planning_interface
+  moveit_visual_tools
   ${dependencies}
 )
 target_link_libraries(planner 
