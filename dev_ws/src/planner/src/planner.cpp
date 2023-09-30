@@ -11,6 +11,12 @@
 
 #include "xarm_planner/xarm_planner.h"
 
+geometry_msgs::msg::Pose pose;
+
+void callback(const geometry_msgs::msg::Pose::SharedPtr msg) {
+  pose = *msg;
+}
+
 void exit_sig_handler(int signum) {
   fprintf(stderr,
           "[test_xarm_planner_api_pose] Ctrl-C caught, exit process...\n");
@@ -25,6 +31,11 @@ int main(int argc, char **argv) {
   std::shared_ptr<rclcpp::Node> node =
       rclcpp::Node::make_shared("test_xarm_planner_api_pose", node_options);
   RCLCPP_INFO(node->get_logger(), "test_xarm_planner_api_pose start");
+
+  rclcpp::Subscription<geometry_msgs::msg::Pose>::SharedPtr subscription = 
+    node->create_subscription<geometry_msgs::msg::Pose>(
+        "/susan_move_rel", 10, callback
+    );
 
   const auto logger = node->get_logger();
 
@@ -60,51 +71,9 @@ int main(int argc, char **argv) {
     moveit_visual_tools.prompt(text);
   };
 
-  std::vector<geometry_msgs::msg::Pose> poses;
-
-  geometry_msgs::msg::Pose target_pose1;
-  target_pose1.position.x = 0.3;
-  target_pose1.position.y = -0.1;
-  target_pose1.position.z = 0.2;
-  target_pose1.orientation.x = 1;
-  target_pose1.orientation.y = 0;
-  target_pose1.orientation.z = 0;
-  target_pose1.orientation.w = 0;
-  poses.push_back(target_pose1);
-
-  geometry_msgs::msg::Pose target_pose2;
-  target_pose2.position.x = 0.3;
-  target_pose2.position.y = 0.1;
-  target_pose2.position.z = 0.2;
-  target_pose2.orientation.x = 1;
-  target_pose2.orientation.y = 0;
-  target_pose2.orientation.z = 0;
-  target_pose2.orientation.w = 0;
-  poses.push_back(target_pose2);
-
-  geometry_msgs::msg::Pose target_pose3;
-  target_pose3.position.x = 0.3;
-  target_pose3.position.y = 0.1;
-  target_pose3.position.z = 0.4;
-  target_pose3.orientation.x = 1;
-  target_pose3.orientation.y = 0;
-  target_pose3.orientation.z = 0;
-  target_pose3.orientation.w = 0;
-  poses.push_back(target_pose3);
-
-  geometry_msgs::msg::Pose target_pose4;
-  target_pose4.position.x = 0.3;
-  target_pose4.position.y = -0.1;
-  target_pose4.position.z = 0.4;
-  target_pose4.orientation.x = 1;
-  target_pose4.orientation.y = 0;
-  target_pose4.orientation.z = 0;
-  target_pose4.orientation.w = 0;
-  poses.push_back(target_pose4);
-
   while (rclcpp::ok()) {
 
-    for (const auto &pose : poses) {
+      RCLCPP_INFO(node->get_logger(), "Received: x_relative = '%f', y_relative = '%f'", pose.position.x, pose.position.y);
 
       // Create a plan to that target pose
       prompt("Press 'Next' in the RvizVisualToolsGui window to plan");
@@ -120,7 +89,6 @@ int main(int argc, char **argv) {
       } else {
         RCLCPP_ERROR(logger, "Planning failed!");
       }
-    }
   }
 
   RCLCPP_INFO(node->get_logger(), "test_xarm_planner_api_pose over");
