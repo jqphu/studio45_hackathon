@@ -11,11 +11,12 @@ def detectCoordinate(img):
     if not returnValue:
         return None, None, None
 
-    x,y,w,h = cv2.boundingRect(points)
+    print(decoded_info)
+
+    x,y,w,h = cv2.boundingRect(points[0])
 
     center_x = x + w / 2
     center_y = y + h / 2
-
 
     img = cv2.polylines(img, points.astype(int), True, (0, 255, 0), 3)
 
@@ -57,15 +58,17 @@ print("Setup complete")
 # Connect to device and start pipeline
 with dai.Device(pipeline) as device:
 
-    video = device.getOutputQueue('video')
+    video = device.getOutputQueue('video', 1,  blocking=False)
     preview = device.getOutputQueue('preview')
     print("Trying to get video")
 
     i = 0;
 
     while True:
+        print("Getting next frame")
         videoFrame = video.get()
         previewFrame = preview.get()
+        print("Frame recieved")
 
         cvFrame = videoFrame.getCvFrame()
 
