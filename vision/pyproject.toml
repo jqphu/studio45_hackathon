@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "vision"
+version = "0.1.0"
+description = ""
+authors = ["Justin <me@justinphu.dev>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+opencv-python = "^4.8.1.78"
+depthai = "^2.22.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
