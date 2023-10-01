@@ -3,8 +3,9 @@ from record_command import record_command
 from transcribe_audio import transcribe_audio
 from parse_command import parse_command
 from play_audio import play_audio
+from vision import pickup
 
-RECORD_DURATION_SECONDS = 8
+RECORD_DURATION_SECONDS = 4
 
 history = []
 
@@ -32,7 +33,9 @@ while True:
     play_audio(response)
 
     if command_type == "pass_spanner":
-       pass
+        print("Pickup")
+        pickup()
+        print("Done pickup")
     elif command_type == "pass_screwdriver":
         pass
     elif command_type == "unsupported":

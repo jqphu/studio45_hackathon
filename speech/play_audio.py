@@ -20,6 +20,7 @@ headers = {
 
 
 def play_audio(input_text):
+    return
     if USE_ELEVENLABS:
         play_audio_from_elevenlabs(input_text)
     else:

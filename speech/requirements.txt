@@ -3,3 +3,6 @@ pygame
 pyaudio
 wave
 numpy
+opencv-python
+depthai
+
