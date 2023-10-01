@@ -29,7 +29,7 @@ while True:
     response = command["response"]
     history = command["history"]
 
-    # play_audio(response)
+    play_audio(response)
 
     if command_type == "pass_spanner":
        pass
