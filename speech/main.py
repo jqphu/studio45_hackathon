@@ -5,7 +5,11 @@ from parse_command import parse_command
 from play_audio import play_audio
 from vision import pickup
 
+<<<<<<< Updated upstream
 RECORD_DURATION_SECONDS = 4
+=======
+RECORD_DURATION_SECONDS = 5
+>>>>>>> Stashed changes
 
 history = []
 
@@ -23,8 +27,6 @@ while True:
     print("parsing command...")
     command = parse_command(command_text, history)
     print(command)
-
-    print("playing audio...")
 
     command_type = command["type"]
     response = command["response"]
