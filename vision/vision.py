@@ -114,44 +114,44 @@ with dai.Device(pipeline) as device:
             # to far away form positive-x -. we wnat to move negative
             if center_x > 200:
                 print("Trying to reduce x")
-                arm.set_position(y=-10, relative=True, wait=True)
+                arm.set_position(y=-20, relative=True, wait=True)
             elif center_x < -200:
                 print("Trying to increase x")
-                arm.set_position(y=+10, relative=True, wait=True)
+                arm.set_position(y=+20, relative=True, wait=True)
             elif center_y > 200:
                 print("Trying to reduce y")
-                arm.set_position(x=-10, relative=True, wait=True)
+                arm.set_position(x=-20, relative=True, wait=True)
             elif center_y < -200:
                 print("Trying to increase y")
-                arm.set_position(x=+10, relative=True, wait=True)
+                arm.set_position(x=+20, relative=True, wait=True)
 
             # to far away form positive-x -. we wnat to move negative
             if center_x > 100:
                 print("Trying to reduce x")
-                arm.set_position(y=-5, relative=True, wait=True)
+                arm.set_position(y=-10, relative=True, wait=True)
             elif center_x < -100:
                 print("Trying to increase x")
-                arm.set_position(y=+5, relative=True, wait=True)
+                arm.set_position(y=+10, relative=True, wait=True)
             elif center_y > 100:
                 print("Trying to reduce y")
-                arm.set_position(x=-5, relative=True, wait=True)
+                arm.set_position(x=-10, relative=True, wait=True)
             elif center_y < -100:
                 print("Trying to increase y")
-                arm.set_position(x=+5, relative=True, wait=True)
+                arm.set_position(x=+10, relative=True, wait=True)
 
             # to far away form positive-x -. we wnat to move negative
             if center_x > 20:
                 print("Trying to reduce x")
-                arm.set_position(y=-1, relative=True, wait=True)
+                arm.set_position(y=-2, relative=True, wait=True)
             elif center_x < -20:
                 print("Trying to increase x")
-                arm.set_position(y=+1, relative=True, wait=True)
+                arm.set_position(y=+2, relative=True, wait=True)
             elif center_y > 20:
                 print("Trying to reduce y")
-                arm.set_position(x=-1, relative=True, wait=True)
+                arm.set_position(x=-2, relative=True, wait=True)
             elif center_y < -20:
                 print("Trying to increase y")
-                arm.set_position(x=+1, relative=True, wait=True)
+                arm.set_position(x=+2, relative=True, wait=True)
 
             if center_x < 20 and center_x > -20 and center_y < 20 and center_y > -20:
                 found=True
@@ -172,7 +172,7 @@ with dai.Device(pipeline) as device:
             go_position(leftPosition)
             arm.set_vacuum_gripper(False)
             go_position(originPosition)
-            found=False
+            return
 
         if cv2.waitKey(1) == ord('q'):
             break

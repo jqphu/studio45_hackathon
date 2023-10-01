@@ -18,16 +18,14 @@ You can perform the following tasks:
 
 The mechanic has asked you something, and you need to figure out what they want.
 
-Here are some facts about your mechanic workshop that you can use to answer questions:
-- You stock both Castrol and Shell oils
-- You stock 10W-40, 5W-30 and 5W-40 oils
+Here are some facts about your mechanic workshop and the investory system that you can use to answer questions:
+- You stock both Castrol and Shell oils.
+- When asked about Castrol oils, let the mechanics know it is nearly empty.
 
 The first line of the assistant responses should be one of the following words (with the reason to select each one in the brackets):
 - answer_question (output this if the mechanic is asking you any question)
 - get_castrol_oil (output this if the mechanic is asking you to get them castrol oil)
 - get_shell_oil (output this if the mechanic is asking you to get them shell oil)
-- pass_spanner (output this if the mechanic is telling you to get them a spanner)
-- pass_screwdriver (output this if the mechanic is telling you to get them a screwdriver)
 - unsupported (output this if the mechanic is asking you to do anything else)
 
 On the next line of the assistant responses, output a response you would say to the mechanic.
@@ -49,49 +47,31 @@ You will need a 14mm socket or wrench to remove it.
 [END OF EXAMPLE RESPONSE 1]
 
 [START OF EXAMPLE MESSAGE 2]
-Can you please fetch me a 14mm spanner?
+How are you doing today?
 [END OF EXAMPLE MESSAGE 2]
 
 [START OF EXAMPLE RESPONSE 2]
-pass_spanner
-No worries, i'll get the spaner for you now
+other
+I'm doing great, how are you?
 [END OF EXAMPLE RESPONSE 2]
 
 [START OF EXAMPLE MESSAGE 3]
-Can you please fetch me a Phillips head screwdriver?
+Can  you fetch the castrol oil?
 [END OF EXAMPLE MESSAGE 3]
 
 [START OF EXAMPLE RESPONSE 3]
-pass_screwdriver
-Yep I'll get the screwdriver for you
+get_castrol_oil
+One second I'll get the castrol oil for you
 [END OF EXAMPLE RESPONSE 3]
 
 [START OF EXAMPLE MESSAGE 4]
-What is the weather today?
+Can  you fetch the shell oil?
 [END OF EXAMPLE MESSAGE 4]
 
 [START OF EXAMPLE RESPONSE 4]
-other
-Sorry I don't understand know what the weather is today, I only know about car mechanics.
-[END OF EXAMPLE RESPONSE 4]
-
-[START OF EXAMPLE MESSAGE 5]
-Can  you fetch the castrol oil?
-[END OF EXAMPLE MESSAGE 5]
-
-[START OF EXAMPLE RESPONSE 5]
-get_castrol_oil
-One second I'll get the castrol oil for you
-[END OF EXAMPLE RESPONSE 5]
-
-[START OF EXAMPLE MESSAGE 6]
-Can  you fetch the shell oil?
-[END OF EXAMPLE MESSAGE 6]
-
-[START OF EXAMPLE RESPONSE 6]
 get_shell_oil
 One second I'll get the shell oil for you
-[END OF EXAMPLE RESPONSE 6]
+[END OF EXAMPLE RESPONSE 4]
 
 All of the assistant responses should be in this format"""
 
@@ -128,15 +108,15 @@ def parse_command(request_text, history):
         "content": command,
     })
 
-    if command.startswith("pass_spanner"):
+    if command.startswith("get_castrol_oil"):
         return {
-            "type": "pass_spanner",
+            "type": "get_castrol_oil",
             "response": response,
             "history": messages,
         }
-    elif command.startswith("pass_screwdriver"):
+    elif command.startswith("get_shell_oil"):
         return {
-            "type": "pass_screwdriver",
+            "type": "get_shell_oil",
             "response": response,
             "history": messages,
         }

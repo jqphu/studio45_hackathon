@@ -5,11 +5,7 @@ from parse_command import parse_command
 from play_audio import play_audio
 from vision import pickup
 
-<<<<<<< Updated upstream
 RECORD_DURATION_SECONDS = 4
-=======
-RECORD_DURATION_SECONDS = 5
->>>>>>> Stashed changes
 
 history = []
 
@@ -34,12 +30,11 @@ while True:
 
     play_audio(response)
 
-    if command_type == "pass_spanner":
+    if command_type == "get_shell_oil":
         print("Pickup")
         pickup()
+        play_audio("There you go!")
         print("Done pickup")
-    elif command_type == "pass_screwdriver":
-        pass
     elif command_type == "unsupported":
         pass
     else:
