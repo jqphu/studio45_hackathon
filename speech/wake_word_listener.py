@@ -1,6 +1,8 @@
 import pyaudio
 import numpy as np
 from openwakeword.model import Model
+import pygame
+
 
 MODEL="hey_jarvis"
 FORMAT = pyaudio.paInt16
@@ -30,7 +32,15 @@ def wait_for_wake_word():
         print(output)
 
         if scores[-1] > 0.4:
+            play_success()
             return
+
+
+def play_success():
+    pygame.mixer.init()
+    pygame.mixer.music.load("tone.wav")
+    pygame.mixer.music.play()
+
 
 if __name__ == "__main__":
     wait_for_wake_word()

@@ -4,7 +4,9 @@ from transcribe_audio import transcribe_audio
 from parse_command import parse_command
 from play_audio import play_audio
 
-RECORD_DURATION_SECONDS = 3
+RECORD_DURATION_SECONDS = 8
+
+history = []
 
 while True:
     print("listening for the wake word...")
@@ -18,13 +20,14 @@ while True:
     print(command_text)
 
     print("parsing command...")
-    command = parse_command(command_text)
+    command = parse_command(command_text, history)
     print(command)
 
     print("playing audio...")
 
     command_type = command["type"]
     response = command["response"]
+    history = command["history"]
 
     play_audio(response)
 
