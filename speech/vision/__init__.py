@@ -25,18 +25,21 @@ def go_position(pos):
 
 
 qcd = cv2.QRCodeDetector()
-def detectCoordinate(img):
+def detectCoordinate(img, target):
     returnValue, decoded_info, points, _ = qcd.detectAndDecodeMulti(img)
 
     if not returnValue:
         return None, None, None
 
+    if target == "CASTROL":
+        target = "SALT"
+    else:
+        target = "PEPPER"
+
     # Assume max 2 itmes ,pepper and salt.
-    if decoded_info[0] == "PEPPER":
+    if decoded_info[0] == target:
         x,y,w,h = cv2.boundingRect(points[0])
-    elif decoded_info[0] == "SALT":
-        return None, None, None
-    elif len(decoded_info) > 1 and decoded_info[1] == "PEPPER":
+    elif len(decoded_info) > 1 and decoded_info[1] == target:
         x,y,w,h = cv2.boundingRect(points[1])
     else:
         return None, None, None
@@ -82,7 +85,7 @@ print("Setup complete")
 
 redCupZ = 178
 
-def pickup():
+def pickup(target):
 # Connect to device and start pipeline
     with dai.Device(pipeline) as device:
         video = device.getOutputQueue('video', 1,  blocking=False)
@@ -91,6 +94,7 @@ def pickup():
         found = False
 
         go_position(originPosition)
+        searchCounter = 0
 
         while True:
             print("Getting next frame")
@@ -99,7 +103,7 @@ def pickup():
 
             cvFrame = videoFrame.getCvFrame()
 
-            img, center_x, center_y = detectCoordinate(cvFrame)
+            img, center_x, center_y = detectCoordinate(cvFrame, target)
             print("Center of bounding rectangle: (", center_x, ",", center_y, ")")
 
             if img is not None:
@@ -140,29 +144,35 @@ def pickup():
                     arm.set_position(x=+5, relative=True, wait=True)
 
                 # to far away form positive-x -. we wnat to move negative
-                if center_x > 20:
+                if center_x > 50:
                     print("Trying to reduce x")
-                    arm.set_position(y=-1, relative=True, wait=True)
-                elif center_x < -20:
+                    arm.set_position(y=-3, relative=True, wait=True)
+                elif center_x < -50:
                     print("Trying to increase x")
-                    arm.set_position(y=+1, relative=True, wait=True)
-                elif center_y > 20:
+                    arm.set_position(y=+3, relative=True, wait=True)
+                elif center_y > 50:
                     print("Trying to reduce y")
-                    arm.set_position(x=-1, relative=True, wait=True)
-                elif center_y < -20:
+                    arm.set_position(x=-3, relative=True, wait=True)
+                elif center_y < -50:
                     print("Trying to increase y")
-                    arm.set_position(x=+1, relative=True, wait=True)
+                    arm.set_position(x=+3, relative=True, wait=True)
 
-                if center_x < 20 and center_x > -20 and center_y < 20 and center_y > -20:
+                if center_x < 50 and center_x > -50 and center_y < 50 and center_y > -50:
                     found=True
                     arm.set_vacuum_gripper(True)
                     # Sleep to suck
                     arm.set_position(z=redCupZ, wait=True)
                     time.sleep(1)
 
+                searchCounter = -1000000
+
             else:
                 # Get BGR frame from NV12 encoded video frame to show with opencv
                 cv2.imshow("video", cvFrame)
+                searchCounter+=1
+                print("Search", searchCounter)
+                if searchCounter > 50:
+                    return False
 
             # Show 'preview' frame as is (already in correct format, no copy is made)
             # cv2.imshow("preview", previewFrame.getFrame())
@@ -172,11 +182,11 @@ def pickup():
                 go_position(leftPosition)
                 arm.set_vacuum_gripper(False)
                 go_position(originPosition)
-                return
+                return True
 
             if cv2.waitKey(1) == ord('q'):
                 break
 
 if __name__ == "__main__":
-    pickup()  # This will execute the main function when the script is run.
+    pickup("CASTROL")  # This will execute the main function when the script is run.
 

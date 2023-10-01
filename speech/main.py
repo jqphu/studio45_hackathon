@@ -32,9 +32,20 @@ while True:
 
     if command_type == "get_shell_oil":
         print("Pickup")
-        pickup()
-        play_audio("There you go!")
+        if not pickup("SHELL"):
+            play_audio("I don't think we have shell oil.")
+        else:
+            play_audio("There you go.")
         print("Done pickup")
+    elif command_type == "get_castrol_oil":
+        print("Pickup")
+        if not pickup("CASTROL"):
+            play_audio("I don't think we have castrol oil.")
+        else:
+            play_audio("There you go.")
+
+        print("Done pickup")
+
     elif command_type == "unsupported":
         pass
     else:
