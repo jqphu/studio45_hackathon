@@ -1,0 +1,5 @@
+openai
+pygame
+pyaudio
+wave
+numpy
